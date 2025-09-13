@@ -14,3 +14,8 @@ scikit-learn>=1.4.0
 
 # Experiment tracking
 wandb>=0.17.0
+huggingface_hub
+hf_transfer
+
+bitsandbytes 
+flash-attn
