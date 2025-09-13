@@ -12,7 +12,7 @@ accelerate>=0.30.0   # not imported, but recommended for Trainer scaling
 pandas>=2.2.0
 scikit-learn>=1.4.0
 
-# Experiment tracking
+# Experiment trackingf
 wandb>=0.17.0
 huggingface_hub
 hf_transfer
