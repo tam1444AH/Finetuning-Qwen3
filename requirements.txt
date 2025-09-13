@@ -1,0 +1,21 @@
+# Core scientific stack
+# Core deep learning framework
+torch>=2.3.0
+datasets
+
+# Hugging Face ecosystem
+transformers>=4.41.0
+peft>=0.11.1
+accelerate>=0.30.0   # not imported, but recommended for Trainer scaling
+
+# Data science utilities
+pandas>=2.2.0
+scikit-learn>=1.4.0
+
+# Experiment trackingf
+wandb>=0.17.0
+huggingface_hub
+hf_transfer
+
+bitsandbytes 
+flash-attn
