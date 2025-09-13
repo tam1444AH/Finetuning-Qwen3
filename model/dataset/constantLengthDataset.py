@@ -1,6 +1,9 @@
 from torch.utils.data import IterableDataset
 from torch.utils.data.dataloader import DataLoader
 import random
+import torch 
+
+from model.dataset.util import get_fim_token_ids
 
 # Create an Iterable dataset that returns constant-length chunks of tokens from a stream of text files.
 
