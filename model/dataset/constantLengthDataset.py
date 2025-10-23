@@ -34,6 +34,7 @@ class ConstantLengthDataset(IterableDataset):
         fim_rate=0.5,
         fim_spm_rate=0.5,
         seed=0,
+        already_tokenized=False,
     ):
         self.tokenizer = tokenizer
         self.concat_token_id = tokenizer.eos_token_id
@@ -46,6 +47,7 @@ class ConstantLengthDataset(IterableDataset):
         self.fim_rate = fim_rate
         self.fim_spm_rate = fim_spm_rate
         self.seed = seed
+        self.already_tokenized=already_tokenized,
 
         (
             self.suffix_tok_id,
@@ -75,9 +77,13 @@ class ConstantLengthDataset(IterableDataset):
                     else:
                         more_examples = False
                         break
-            tokenized_inputs = self.tokenizer(buffer, truncation=False)["input_ids"]
-            all_token_ids = []
 
+            if self.already_tokenized:
+                tokenized_inputs = buffer
+            else:
+                tokenized_inputs = self.tokenizer(buffer, truncation=False)["input_ids"]
+                
+            all_token_ids = []
             for tokenized_input in tokenized_inputs:
                 # optionally do FIM permutations
                 if self.fim_rate > 0:
