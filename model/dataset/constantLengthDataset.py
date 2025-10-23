@@ -49,7 +49,7 @@ class ConstantLengthDataset(IterableDataset):
         self.fim_spm_rate = fim_spm_rate
         self.seed = seed
         self.already_tokenized = already_tokenized
-        self.overlap_ratio = overlap_ration
+        self.overlap_ratio = overlap_ratio
 
         (
             self.suffix_tok_id,
