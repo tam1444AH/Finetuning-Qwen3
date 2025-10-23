@@ -35,6 +35,7 @@ class ConstantLengthDataset(IterableDataset):
         fim_spm_rate=0.5,
         seed=0,
         already_tokenized=False,
+        overlap_ratio=0.0,
     ):
         self.tokenizer = tokenizer
         self.concat_token_id = tokenizer.eos_token_id
@@ -47,7 +48,8 @@ class ConstantLengthDataset(IterableDataset):
         self.fim_rate = fim_rate
         self.fim_spm_rate = fim_spm_rate
         self.seed = seed
-        self.already_tokenized=already_tokenized,
+        self.already_tokenized = already_tokenized
+        self.overlap_ratio = overlap_ration
 
         (
             self.suffix_tok_id,
@@ -63,6 +65,10 @@ class ConstantLengthDataset(IterableDataset):
         iterator = iter(self.dataset)
         more_examples = True
         np_rng = np.random.RandomState(seed=self.seed)
+        
+        stride = int(self.seq_length * (1 - self.overlap_ratio))
+        stride = max(1, stride)
+        
         while more_examples:
             buffer, buffer_len = [], 0
             while True:
@@ -101,10 +107,11 @@ class ConstantLengthDataset(IterableDataset):
 
                 all_token_ids.extend(tokenized_input + [self.concat_token_id])
             examples = []
-            for i in range(0, len(all_token_ids), self.seq_length):
+            for i in range(0, len(all_token_ids) - self.seq_length + 1, stride):
                 input_ids = all_token_ids[i : i + self.seq_length]
                 if len(input_ids) == self.seq_length:
                     examples.append(input_ids)
+                    
             random.shuffle(examples)
             for example in examples:
                 self.current_size += 1
