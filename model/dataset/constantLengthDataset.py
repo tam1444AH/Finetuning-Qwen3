@@ -79,8 +79,8 @@ class ConstantLengthDataset(IterableDataset):
     #     n_chunks = max(1, (total_tokens - self.seq_length) // stride + 1)
     #     return n_chunks
 
-    # def __len__(self):
-    #     return self._length
+    def __len__(self):
+        return self._length
 
     def _estimate_length(self):
         """Estimate (and optionally measure) dataset length accurately once."""
@@ -91,13 +91,11 @@ class ConstantLengthDataset(IterableDataset):
             iterator = iter(self.dataset)
             buffer, buffer_len = [], 0
     
-            # Read through dataset once to measure token count
             for item in iterator:
                 content = item[self.content_field]
                 buffer.append(content)
                 buffer_len += len(content)
     
-            # Tokenize the whole dataset once for true token length
             if self.already_tokenized:
                 all_token_ids = [tok for sub in buffer for tok in sub]
             else:
