@@ -127,11 +127,16 @@ class ConstantLengthDataset(IterableDataset):
                     )
 
                 all_token_ids.extend(tokenized_input + [self.concat_token_id])
+
+            self.pad_tok_id = (
+                self.tokenizer.pad_token_id if self.tokenizer.pad_token_id is not None else self.tokenizer.eos_token_id
+            )
             examples = []
-            for i in range(0, len(all_token_ids) - self.seq_length + 1, stride):
+            for i in range(0, len(all_token_ids), stride):
                 input_ids = all_token_ids[i : i + self.seq_length]
-                if len(input_ids) == self.seq_length:
-                    examples.append(input_ids)
+                if len(input_ids) < self.seq_length:
+                    input_ids = input_ids + [self.pad_tok_id] * (self.seq_length - len(input_ids))
+                examples.append(input_ids)
                     
             random.shuffle(examples)
             for example in examples:
