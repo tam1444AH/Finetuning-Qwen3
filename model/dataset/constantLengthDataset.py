@@ -62,22 +62,6 @@ class ConstantLengthDataset(IterableDataset):
             self.fim_rate = 0
 
         self._length = self._estimate_length()
-            
-    # def _estimate_length(self):
-    #     total_tokens = 0
-
-    #     if self.already_tokenized:
-    #         for example in self.dataset:
-    #             total_tokens += len(example[self.content_field])
-
-    #     else:
-    #         for example in self.dataset:
-    #             total_tokens += len(example[self.content_field])
-
-    #     stride = int(self.seq_length * (1 - self.overlap_ratio))
-    #     stride = max(1, stride)
-    #     n_chunks = max(1, (total_tokens - self.seq_length) // stride + 1)
-    #     return n_chunks
 
     def __len__(self):
         return self._length
