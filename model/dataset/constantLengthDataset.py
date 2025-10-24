@@ -63,24 +63,57 @@ class ConstantLengthDataset(IterableDataset):
 
         self._length = self._estimate_length()
             
+    # def _estimate_length(self):
+    #     total_tokens = 0
+
+    #     if self.already_tokenized:
+    #         for example in self.dataset:
+    #             total_tokens += len(example[self.content_field])
+
+    #     else:
+    #         for example in self.dataset:
+    #             total_tokens += len(example[self.content_field])
+
+    #     stride = int(self.seq_length * (1 - self.overlap_ratio))
+    #     stride = max(1, stride)
+    #     n_chunks = max(1, (total_tokens - self.seq_length) // stride + 1)
+    #     return n_chunks
+
+    # def __len__(self):
+    #     return self._length
+
     def _estimate_length(self):
-        total_tokens = 0
-
-        if self.already_tokenized:
-            for example in self.dataset:
-                total_tokens += len(example[self.content_field])
-
-        else:
-            for example in self.dataset:
-                total_tokens += len(example[self.content_field])
-
-        stride = int(self.seq_length * (1 - self.overlap_ratio))
-        stride = max(1, stride)
-        n_chunks = max(1, (total_tokens - self.seq_length) // stride + 1)
-        return n_chunks
-
-    def __len__(self):
-        return self._length
+        """Estimate (and optionally measure) dataset length accurately once."""
+        try:
+            total_examples = 0
+            total_tokens = 0
+    
+            iterator = iter(self.dataset)
+            buffer, buffer_len = [], 0
+    
+            # Read through dataset once to measure token count
+            for item in iterator:
+                content = item[self.content_field]
+                buffer.append(content)
+                buffer_len += len(content)
+    
+            # Tokenize the whole dataset once for true token length
+            if self.already_tokenized:
+                all_token_ids = [tok for sub in buffer for tok in sub]
+            else:
+                tokenized = self.tokenizer(buffer, truncation=False)["input_ids"]
+                all_token_ids = [tid for seq in tokenized for tid in seq]
+    
+            total_tokens = len(all_token_ids)
+            stride = int(self.seq_length * (1 - self.overlap_ratio))
+            stride = max(1, stride)
+            total_examples = max(1, (total_tokens + stride - 1) // stride)
+    
+            print(f"[INFO] Empirical dataset length = {total_examples} sequences (~{total_tokens} tokens)")
+            return total_examples
+        except Exception as e:
+            print(f"[WARN] Length estimation failed: {e}")
+            return 1
         
     def __iter__(self):
         iterator = iter(self.dataset)
