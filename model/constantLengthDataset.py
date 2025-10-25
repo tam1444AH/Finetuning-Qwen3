@@ -3,7 +3,7 @@ from torch.utils.data.dataloader import DataLoader
 import random
 import torch 
 import numpy as np
-from model.dataset.util import get_fim_token_ids, permute
+from model.util import get_fim_token_ids, permute
 
 # Create an Iterable dataset that returns constant-length chunks of tokens from a stream of text files.
 
